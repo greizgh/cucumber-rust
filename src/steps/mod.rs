@@ -48,26 +48,39 @@ type ArgsSyncTestFunction<W> = fn(&mut W, &[String], &Step) -> ();
 type LiteralAsyncTestFunction<W> = fn(Arc<RwLock<W>>, &Step) -> TestFuture;
 type ArgsAsyncTestFunction<W> = fn(Arc<RwLock<W>>, &[String], &Step) -> TestFuture;
 
-pub(crate) struct TestPayload<W: World> {
-    function: Arc<TestFunction<W>>,
-    payload: Vec<String>,
+#[derive(Debug)]
+pub enum TestPayloadMeta {
+    None,
+    Regex(regex::Regex),
 }
 
-enum SyncTestFunction<W> {
+#[non_exhaustive]
+pub struct TestPayload<W: World> {
+    pub function: Arc<TestFunction<W>>,
+    pub payload: Vec<String>,
+    pub meta: TestPayloadMeta,
+}
+
+#[non_exhaustive]
+pub enum SyncTestFunction<W> {
     WithArgs(ArgsSyncTestFunction<W>),
     WithoutArgs(LiteralSyncTestFunction<W>),
 }
 
-enum AsyncTestFunction<W> {
+#[non_exhaustive]
+pub enum AsyncTestFunction<W> {
     WithArgs(ArgsAsyncTestFunction<W>),
     WithoutArgs(LiteralAsyncTestFunction<W>),
 }
 
-enum TestFunction<W> {
+#[non_exhaustive]
+pub enum TestFunction<W> {
     Sync(SyncTestFunction<W>),
     Async(AsyncTestFunction<W>),
 }
 
+#[derive(Debug)]
+#[non_exhaustive]
 pub enum TestResult {
     Skipped,
     Unimplemented,
@@ -187,7 +200,10 @@ impl<W: World> Steps<W> {
             output.visit_step(rule, &scenario, &step);
 
             let test_type = match self.resolve_test(&step) {
-                Some(v) => v,
+                Some(v) => {
+                    output.visit_step_resolved(&step, &v);
+                    v
+                }
                 None => {
                     output.visit_step_result(rule, &scenario, &step, &TestResult::Unimplemented);
                     if !is_skipping {

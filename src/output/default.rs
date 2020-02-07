@@ -657,6 +657,13 @@ impl OutputVisitor for DefaultOutput {
         pb.inc(1);
     }
 
+    fn visit_step_resolved<W: crate::World>(
+        &self,
+        _step: &crate::Step,
+        _test: &crate::steps::TestPayload<W>,
+    ) {
+    }
+
     fn visit_step_result(
         &self,
         rule: Option<&gherkin::Rule>,

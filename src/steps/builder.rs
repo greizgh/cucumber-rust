@@ -8,7 +8,10 @@
 
 use regex::Regex;
 
-use super::{ArgsSyncTestFunction, LiteralSyncTestFunction, ArgsAsyncTestFunction, LiteralAsyncTestFunction, StepsCollection};
+use super::{
+    ArgsAsyncTestFunction, ArgsSyncTestFunction, LiteralAsyncTestFunction, LiteralSyncTestFunction,
+    StepsCollection,
+};
 use crate::{StepType, World};
 
 #[derive(Default)]
@@ -66,18 +69,29 @@ impl<W: World> StepsBuilder<W> {
         self
     }
 
-
-    pub fn given_async(&mut self, name: &'static str, test_fn: LiteralAsyncTestFunction<W>) -> &mut Self {
-      self.add_async_literal(StepType::Given, name, test_fn);
-      self
+    pub fn given_async(
+        &mut self,
+        name: &'static str,
+        test_fn: LiteralAsyncTestFunction<W>,
+    ) -> &mut Self {
+        self.add_async_literal(StepType::Given, name, test_fn);
+        self
     }
 
-    pub fn when_async(&mut self, name: &'static str, test_fn: LiteralAsyncTestFunction<W>) -> &mut Self {
+    pub fn when_async(
+        &mut self,
+        name: &'static str,
+        test_fn: LiteralAsyncTestFunction<W>,
+    ) -> &mut Self {
         self.add_async_literal(StepType::When, name, test_fn);
         self
     }
 
-    pub fn then_async(&mut self, name: &'static str, test_fn: LiteralAsyncTestFunction<W>) -> &mut Self {
+    pub fn then_async(
+        &mut self,
+        name: &'static str,
+        test_fn: LiteralAsyncTestFunction<W>,
+    ) -> &mut Self {
         self.add_async_literal(StepType::Then, name, test_fn);
         self
     }

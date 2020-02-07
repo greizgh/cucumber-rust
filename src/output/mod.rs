@@ -1,3 +1,4 @@
+pub mod debug;
 pub mod default;
 
 use std::path::Path;
@@ -24,6 +25,11 @@ pub trait OutputVisitor {
         rule: Option<&gherkin::Rule>,
         scenario: &gherkin::Scenario,
         step: &gherkin::Step,
+    );
+    fn visit_step_resolved<W: crate::World>(
+        &self,
+        step: &gherkin::Step,
+        test: &crate::steps::TestPayload<W>,
     );
     fn visit_step_result(
         &self,

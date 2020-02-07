@@ -18,10 +18,10 @@ mod steps;
 
 pub use gherkin::{Scenario, Step, StepType};
 
-pub use self::output::{default::DefaultOutput, OutputVisitor};
+pub use self::output::{debug::DebugOutput, default::DefaultOutput, OutputVisitor};
 pub use self::runner::CucumberBuilder;
-pub use self::steps::{Steps, StepsBuilder, TestResult};
 pub use self::steps::TestFuture;
+pub use self::steps::{Steps, StepsBuilder, TestResult};
 pub trait World: Default + Send + Sync + 'static {}
 
 type HelperFn = fn(&Scenario) -> ();

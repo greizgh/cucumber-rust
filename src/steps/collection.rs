@@ -11,7 +11,8 @@ use std::collections::HashMap;
 use std::sync::Arc;
 
 use super::{
-    ArgsSyncTestFunction, LiteralSyncTestFunction, ArgsAsyncTestFunction, LiteralAsyncTestFunction, AsyncTestFunction, SyncTestFunction, TestFunction, TestPayload,
+    ArgsAsyncTestFunction, ArgsSyncTestFunction, AsyncTestFunction, LiteralAsyncTestFunction,
+    LiteralSyncTestFunction, SyncTestFunction, TestFunction, TestPayload, TestPayloadMeta,
 };
 use crate::{hashable_regex::HashableRegex, Step, StepType, World};
 
@@ -66,7 +67,9 @@ impl<W: World> StepsCollection<W> {
         name: &'static str,
         callback: LiteralAsyncTestFunction<W>,
     ) {
-        let callback = Arc::new(TestFunction::Async(AsyncTestFunction::WithoutArgs(callback)));
+        let callback = Arc::new(TestFunction::Async(AsyncTestFunction::WithoutArgs(
+            callback,
+        )));
 
         match ty {
             StepType::Given => self.given.literals.insert(name, callback),
@@ -104,6 +107,7 @@ impl<W: World> StepsCollection<W> {
                 return Some(TestPayload {
                     function: Arc::clone(function),
                     payload: vec![],
+                    meta: crate::steps::TestPayloadMeta::None,
                 })
             }
             None => {}
@@ -135,6 +139,7 @@ impl<W: World> StepsCollection<W> {
             return Some(TestPayload {
                 function: Arc::clone(function),
                 payload: matches,
+                meta: TestPayloadMeta::Regex(regex.0.clone()),
             });
         }
 
